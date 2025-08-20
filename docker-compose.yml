@@ -1,0 +1,60 @@
+version: '3.7'
+
+services:
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
+    links:
+      - mongo
+    networks:
+      - fiap-network
+    depends_on:
+      - mongo
+
+  mongo:
+    image: 'mongo'
+    container_name: 'mongo'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - fiap-network
+    restart: unless-stopped
+
+  fiap-autenticacao:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_SKIP_TEST=true
+    container_name: 'fiap-autenticacao'
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo:27017/pagamentos?authSource=admin
+      - SPRING_DATA_MONGODB_HOST=mongo
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8080:8080"
+    networks:
+      - fiap-network
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+networks:
+  fiap-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
