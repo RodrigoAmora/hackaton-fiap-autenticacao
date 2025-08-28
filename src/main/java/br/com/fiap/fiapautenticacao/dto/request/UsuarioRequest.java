@@ -1,5 +1,7 @@
 package br.com.fiap.fiapautenticacao.dto.request;
 
+import br.com.fiap.fiapautenticacao.model.role.ERole;
+import br.com.fiap.fiapautenticacao.model.role.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,5 +29,13 @@ public record UsuarioRequest(
         @Schema(description = "Data de nascimento do usuário", example = "1988-07-20")
         @JsonFormat(pattern = "yyyy-MM-dd")
         @JsonProperty("data_nascimento")
-        LocalDate dataNascimento
+        LocalDate dataNascimento,
+
+        @Schema(
+                description = "Role/papel do usuário no sistema",
+                example = "{\"name\": \"ROLE_USER\"}",
+                implementation = Role.class
+        )
+        @JsonProperty("role")
+        Role role
 ) {}
