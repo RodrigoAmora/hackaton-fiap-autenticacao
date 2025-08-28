@@ -6,8 +6,13 @@ import br.com.fiap.fiapautenticacao.exception.UsuarioException;
 import br.com.fiap.fiapautenticacao.mapper.UsuarioMapper;
 import br.com.fiap.fiapautenticacao.model.Usuario;
 import br.com.fiap.fiapautenticacao.repository.UsuarioRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -26,15 +31,28 @@ public class UsuarioService {
 
     public UsuarioDTO salvarUsuario(UsuarioRequest request) {
         usuarioRepository.findByEmail(request.email())
-                .ifPresent(u -> {
-                    throw new UsuarioException(
-                            "Usuário com e-mail " + request.email() + " já está cadastrado"
-                    );
+                .ifPresent(usuario -> {
+                    throw new UsuarioException("Usuário com e-mail "+request.email()+" já está cadastrado");
                 });
 
-        Usuario usuario = usuarioMapper.mapearParaUsurio(request);
+        Usuario usuario = usuarioMapper.mapearParaUsuario(request);
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         usuario = usuarioRepository.save(usuario);
         return usuarioMapper.mapearParaUsuarioDTO(usuario);
     }
+
+    public Page<UsuarioDTO> buscarUsuarios(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, "id");
+        return this.usuarioRepository.findAll(pageRequest).map(usuarioMapper::mapearParaUsuarioDTO);
+    }
+
+    public UsuarioDTO buscarUsuarioPorEmail(String email) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+        if (usuario.isPresent()) {
+            return usuarioMapper.mapearParaUsuarioDTO(usuario.get());
+        } else {
+            throw new UsuarioException("Usuário com e-mail "+email+" não cadastrado");
+        }
+    }
+
 }
