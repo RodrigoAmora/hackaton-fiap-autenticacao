@@ -8,15 +8,29 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 
 @Tag(name = "Endpoints de Usuário")
 public interface UsuarioControllerDoc {
 
-    @Operation(summary = "Cadastro")
+    @Operation(summary = "Cadastrar Usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cadastro de Usuário.", content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
     })
     ResponseEntity<?> create(UsuarioRequest request);
+
+    @Operation(summary = "Recuperar Usuário Logado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Recuperar as informações do usuário logado.", content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
+    })
+    UsuarioDTO getUsuarioLogado(Authentication authentication);
+
+    @Operation(summary = "Listar Usuários")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listar todos os Usuários.", content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
+    })
+    ResponseEntity<Page<UsuarioDTO>> buscarUsuarios(int page, int size);
 
 }
