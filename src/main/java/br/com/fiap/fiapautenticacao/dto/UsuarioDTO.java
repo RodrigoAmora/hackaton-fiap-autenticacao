@@ -1,9 +1,11 @@
 package br.com.fiap.fiapautenticacao.dto;
 
+import br.com.fiap.fiapautenticacao.model.role.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record UsuarioDTO(
         @JsonProperty("id")
@@ -20,5 +22,12 @@ public record UsuarioDTO(
 
         @JsonProperty("data_nascimento")
         @JsonFormat(pattern = "yyyy-MM-dd")
-        LocalDate dataNascimento
+        LocalDate dataNascimento,
+
+        @JsonProperty("data_cadastro")
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime dataCadastro,
+
+        @JsonProperty("role")
+        Role role
 ) {}
