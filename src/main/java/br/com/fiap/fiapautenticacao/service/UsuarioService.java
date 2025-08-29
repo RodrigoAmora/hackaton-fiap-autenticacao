@@ -41,6 +41,15 @@ public class UsuarioService {
         return usuarioMapper.mapearParaUsuarioDTO(usuario);
     }
 
+    public UsuarioDTO buscarUsuarioPeloId(String id) {
+        Optional<Usuario> usuario = this.usuarioRepository.findById(id);
+        if (usuario.isPresent()) {
+            return usuarioMapper.mapearParaUsuarioDTO(usuario.get());
+        } else {
+            throw new UsuarioException("Usuário não encontrado");
+        }
+    }
+
     public Page<UsuarioDTO> buscarUsuarios(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, "id");
         return this.usuarioRepository.findAll(pageRequest).map(usuarioMapper::mapearParaUsuarioDTO);

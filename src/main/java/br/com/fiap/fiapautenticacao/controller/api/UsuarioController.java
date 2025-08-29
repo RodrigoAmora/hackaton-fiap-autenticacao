@@ -27,6 +27,12 @@ public class UsuarioController implements UsuarioControllerDoc {
     }
 
     @Override
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioDTO> buscarUsuarioPeloId(@PathVariable(name = "id") String id) {
+        return ResponseEntity.ok(usuarioService.buscarUsuarioPeloId(id));
+    }
+
+    @Override
     @GetMapping("/me")
     public UsuarioDTO getUsuarioLogado(Authentication authentication) {
         return usuarioService.buscarUsuarioPorEmail(authentication.getName());

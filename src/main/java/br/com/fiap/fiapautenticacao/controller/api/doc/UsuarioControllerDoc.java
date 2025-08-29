@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Tag(name = "Endpoints de Usuário")
 public interface UsuarioControllerDoc {
@@ -20,6 +21,12 @@ public interface UsuarioControllerDoc {
             @ApiResponse(responseCode = "200", description = "Cadastro de Usuário.", content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
     })
     ResponseEntity<?> create(UsuarioRequest request);
+
+    @Operation(summary = "Buscar Usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Buscar Usuário pelo id.", content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
+    })
+    ResponseEntity<UsuarioDTO> buscarUsuarioPeloId(@PathVariable(name = "id") String id);
 
     @Operation(summary = "Recuperar Usuário Logado")
     @ApiResponses(value = {
