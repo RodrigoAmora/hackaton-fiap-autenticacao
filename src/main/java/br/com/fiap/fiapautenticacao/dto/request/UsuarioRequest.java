@@ -32,8 +32,8 @@ public record UsuarioRequest(
         LocalDate dataNascimento,
 
         @Schema(
-                description = "Role/papel do usuário no sistema",
-                example = "{\"name\": \"ROLE_USER\"}",
+                description = "Role/papel do usuário no sistema. (ROLE_USER, ROLE_MODERATOR, ROLA_ADMIN)",
+                example = "{\"name\": \"ROLE_MODERATOR\"}",
                 implementation = Role.class
         )
         @JsonProperty("role")
