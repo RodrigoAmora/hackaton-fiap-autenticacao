@@ -56,7 +56,7 @@ sudo ./mongod --dbpath /usr/local/var/mongodb
 ```
 
 ##
-<b>Vairáveis de ambiente:</b>
+<b>Vairáveis de ambiente:</b><br>
 Crie o arquivo `.env` na raiz do projeto e adicione as seguintes variáveis:
 * MONGO_EXPRESS_USERNAME - Usuário do Mongo Express
 * MONGO_EXPRESS_PASSWORD - Senha do Mongo Express
