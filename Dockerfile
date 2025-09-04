@@ -6,6 +6,7 @@ WORKDIR /build
 # Copia os arquivos do projeto
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
+RUN mkdir ./src
 COPY src ./src/
 
 # Dá permissão de execução ao mvnw
