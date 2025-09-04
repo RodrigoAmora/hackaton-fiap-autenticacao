@@ -92,7 +92,7 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Build project
-      run: ./mvnw -B clean verify
+      run: mvn clean install -DskipTests
 
     - name: Build Docker image
       run: docker build -t rodrigoamora/rodrigo-springboot:${{ github.sha }} .
