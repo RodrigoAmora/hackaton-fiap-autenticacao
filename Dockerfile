@@ -3,9 +3,9 @@ WORKDIR /app
 
 # Primeiro, copie apenas os arquivos necessários para resolver dependências
 # Isso ajuda a cachear as dependências
-COPY pom.xml /
+COPY pom.xml .
 COPY .mvn/ .mvn/
-COPY mvnw /
+COPY mvnw .
 
 # Dê permissão de execução ao mvnw
 RUN chmod +x ./mvnw
