@@ -1,14 +1,21 @@
+FROM maven:3.9-eclipse-temurin-17 as builder
 
-FROM eclipse-temurin:17-jdk-focal as builder
-
-# Define o diretório de trabalho
 WORKDIR /build
 
-# Copia os arquivos do projeto
-COPY . .
+# Copia apenas o POM primeiro para aproveitar o cache das dependências
+COPY pom.xml .
+COPY .mvn .mvn
+COPY mvnw .
+COPY mvnw.cmd .
 
-# Configura permissões e executa build
-RUN chmod +x mvnw && ./mvnw package -DskipTests
+# Downloads das dependências
+RUN mvn dependency:go-offline
+
+# Agora copia o código fonte
+COPY src src
+
+# Executa o build
+RUN mvn package -DskipTests
 
 # Segunda etapa - imagem final
 FROM eclipse-temurin:17-jre-focal
