@@ -1,30 +1,33 @@
-# Primeira etapa: Build
-FROM maven:3.9.5-eclipse-temurin-17-focal AS builder
+# Define a imagem base
+FROM openjdk:17-oracle
 
-WORKDIR /build
+LABEL maintainer="rodrigo.amora.freitas@gmail.com"
+LABEL version="1.0.7"
+LABEL name="Rodrigo Amora"
 
-# Debug: Mostrar diretório atual
-RUN pwd && ls -la
+# Define as variáveis APP_NAME e VERSION (corrigido o nome da variável APP_NAME)
+ENV APP_NAME=FiapAutenticacao
+ENV VERSION=1.0
 
-# Copia todo o conteúdo do projeto
-COPY . .
+# Copia o arquivo JAR do seu projeto para dentro do container
+COPY ./target/${APP_NAME}-${VERSION}.jar  /app/${APP_NAME}.jar
 
-# Debug: Mostrar conteúdo após cópia
-RUN pwd && ls -la
-
-# Executa o build
-RUN ./mvnw clean package -DskipTests
-
-# Segunda etapa: Runtime
-FROM eclipse-temurin:17-jre-focal
-
+# Define o diretório de trabalho primeiro
 WORKDIR /app
 
-COPY --from=builder /build/target/*.jar app.jar
+# Copia os arquivos necessários para build
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY src src
 
-ENV SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/fiap_auteticacao
-ENV SERVER_PORT=8080
+# Configura permissões e executa build
+RUN ./mvnw dependency:go-offline -B
+RUN ./mvnw package -DskipTests
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
+# Define o comando de inicialização do seu projeto
+CMD ["java", "-jar", "/app/FiapAutenticacao.jar"]
+
+# Expõe a porta do seu projeto
 EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
