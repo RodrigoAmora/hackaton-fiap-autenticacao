@@ -1,5 +1,20 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM maven:3.8.5-openjdk-17 as builder
 WORKDIR /app
-COPY target/*.jar app.jar
+
+COPY src/ ./src/
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+
+RUN chmod +x ./mvnw
+#RUN mvn dependency:go-offline -B
+RUN mvn package -DskipTests
+
+######
+
+FROM eclipse-temurin:17-jdk as prod
+RUN mkdir /app
+COPY --from=builder /app/target/*.jar /app/app.jar
+ENV SERVER_PORT=8080
+WORKDIR /app
 EXPOSE 8080
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]
