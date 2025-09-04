@@ -32,10 +32,7 @@ services:
 
   fiap-autenticacao:
     build:
-      context: .
       dockerfile: Dockerfile
-      args:
-        - MAVEN_SKIP_TEST=true
     image: rodrigoamora/rodrigo-springboot:latest
     container_name: 'fiap-autenticacao'
     environment:
