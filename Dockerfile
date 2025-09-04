@@ -4,15 +4,11 @@ FROM maven:3.9.5-eclipse-temurin-17-focal AS builder
 WORKDIR /build
 
 # Copiar arquivos principais para cache
-COPY pom.xml .
-COPY mvnw .
-COPY .mvn/ .mvn/
+COPY . .
 
 # Baixar dependências
 RUN ./mvnw dependency:go-offline
 
-# Copiar código-fonte
-COPY src src
 
 # Build do projeto
 RUN ./mvnw clean package -DskipTests
