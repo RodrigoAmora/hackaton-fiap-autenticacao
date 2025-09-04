@@ -4,8 +4,12 @@ FROM maven:3.9.5-eclipse-temurin-17-focal AS builder
 # Define o diretório de trabalho
 WORKDIR /build
 
-# Copia todo o projeto
-COPY . .
+# Copia só o pom.xml para cachear dependências
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Copia o código
+COPY src src
 
 # Executa o build usando mvn diretamente
 RUN mvn clean package -DskipTests
