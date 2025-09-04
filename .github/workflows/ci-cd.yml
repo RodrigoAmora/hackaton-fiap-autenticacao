@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -40,11 +40,14 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
     - name: Push Docker Image
-      if: github.ref == 'refs/heads/main'
-      run: docker push fiap-autenticacao
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/fiap-autenticacao:latest
   
   deploy:
-    needs: build
+    needs: build-and-test
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
