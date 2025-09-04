@@ -4,10 +4,7 @@ FROM eclipse-temurin:17-jdk-focal AS builder
 WORKDIR /build
 
 # Copia os arquivos do projeto
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
-RUN mkdir -p /src
-COPY src src
+COPY . .
 
 # Dá permissão de execução ao mvnw
 RUN chmod +x ./mvnw
