@@ -26,6 +26,9 @@ jobs:
       with:
         mongodb-version: '6.0'
 
+    - name: Build with Maven (debug)
+      run: mvn -B clean package -DskipTests
+
     - name: Build and Test
       run: mvn -B verify
 
