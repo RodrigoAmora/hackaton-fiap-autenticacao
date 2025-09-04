@@ -43,8 +43,10 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
-        push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fiap-autenticacao:latest
+        push: false
+        tags: fiap-autenticacao:latest
+        build-args: |
+          MAVEN_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG"
   
   deploy:
     needs: build-and-test
