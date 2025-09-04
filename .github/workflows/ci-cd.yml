@@ -41,7 +41,7 @@ jobs:
 
     - name: Push Docker Image
       if: github.ref == 'refs/heads/main'
-      run: docker push rodrigoamora/rodrigo-springboot:latest
+      run: docker push fiap-autenticacao
   
   deploy:
     needs: build
@@ -76,6 +76,6 @@ jobs:
         script: |
           cd /home/${{ secrets.EC2_USERNAME }}/app
           docker-compose down || true
-          docker rmi rodrigoamora/rodrigo-springboot:latest || true
-          docker pull rodrigoamora/rodrigo-springboot:latest
+          docker rmi fiap-autenticacao || true
+          docker pull fiap-autenticacao
           docker-compose up -d
