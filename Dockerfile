@@ -1,26 +1,4 @@
-FROM maven:3.8.5-openjdk-17 as builder
-WORKDIR /app
-
-RUN mkdir src
-
-COPY pom.xml .
-COPY src/ ./src/
-COPY .mvn .mvn
-COPY mvnw .
-
-RUN chmod +x ./mvnw
-#RUN mvn dependency:go-offline -B
-RUN mvn package -DskipTests
-
-######
-
-FROM eclipse-temurin:17-jdk as prod
-
-RUN mkdir /app
-COPY --from=builder /app/target/*.jar /app/app.jar
-
-WORKDIR /app
-
-EXPOSE 8080
-
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+FROM eclipse-temurin:17-jdk-alpine
+VOLUME /tmp
+COPY target/*.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
