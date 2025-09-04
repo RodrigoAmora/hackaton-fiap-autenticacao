@@ -1,33 +1,21 @@
-# Primeira etapa: Build
 FROM maven:3.8.5-openjdk-17 as builder
-
-RUN mkdir /build
-WORKDIR /build
-
-
-# Copie o pom.xml e baixe as dependências, isso melhora o cache do Docker
-COPY pom.xml ./
-RUN mvn dependency:go-offline
-
-# Copie o código fonte e construa o JAR
-RUN mkdir /src
-COPY src /src/
-RUN ./mvnw clean package -DskipTests
-
-
-# Segunda etapa: Runtime
-FROM eclipse-temurin:17-jre-focal
-
-RUN mkdir /app
 WORKDIR /app
 
-COPY --from=builder /build/target/*.jar app.jar
+COPY pom.xml .
+COPY src/ ./src/
+COPY .mvn .mvn
+COPY mvnw .
 
-# Configurações do MongoDB e da aplicação
-ENV SERVER_PORT=8080
-ENV SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/fiap_auteticacao
-ENV JWT_SECRET=aeiou
+RUN chmod +x ./mvnw
+#RUN mvn dependency:go-offline -B
+RUN mvn package -DskipTests
 
-EXPOSE 8080
+######
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+FROM eclipse-temurin:17-jdk as prod
+RUN mkdir /app
+COPY --from=builder /app/target/*.jar /app/app.jar
+ENV SERVER_PORT=6060
+WORKDIR /app
+EXPOSE 6060
+ENTRYPOINT ["java","-jar","/app/app.jar"]
