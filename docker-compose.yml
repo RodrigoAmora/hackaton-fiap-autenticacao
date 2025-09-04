@@ -32,6 +32,7 @@ services:
 
   fiap-autenticacao:
     build:
+      context: .
       dockerfile: Dockerfile
     image: rodrigoamora/rodrigo-springboot:latest
     container_name: 'fiap-autenticacao'
