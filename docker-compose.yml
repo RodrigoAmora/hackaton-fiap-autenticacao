@@ -32,7 +32,6 @@ services:
 
   fiap-autenticacao:
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_SKIP_TEST=true
