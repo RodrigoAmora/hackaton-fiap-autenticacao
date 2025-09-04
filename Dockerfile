@@ -15,7 +15,7 @@ COPY mvnw.cmd .
 RUN mvn dependency:go-offline
 
 # Copia o código fonte
-COPY src/ src/
+COPY src src
 
 # Executa o build
 RUN mvn clean package -DskipTests
