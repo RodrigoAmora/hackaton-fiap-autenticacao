@@ -3,8 +3,8 @@ FROM maven:3.9.5-amazoncorretto-17 AS build
 
 WORKDIR /workspace
 
-# Copie o pom.xml e baixe as dependências, isso melhora o cache do Docker
-COPY pom.xml .
+# Copia todo o conteúdo do projeto
+COPY . .
 RUN mvn dependency:go-offline
 
 # Copie o código fonte e construa o JAR
