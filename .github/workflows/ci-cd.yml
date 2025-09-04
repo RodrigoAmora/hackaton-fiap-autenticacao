@@ -83,7 +83,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd /home/${{ secrets.EC2_USERNAME }}/app
-          docker-compose down || true
-          docker rmi rodrigoamora/fiap-autenticacao:latest || true
-          docker pull rodrigoamora/fiap-autenticacao:latest
-          docker-compose up -d
+          sudo docker-compose down || true
+          sudo docker rmi rodrigoamora/fiap-autenticacao:latest || true
+          sudo docker pull rodrigoamora/fiap-autenticacao:latest
+          sudo docker-compose up -d
