@@ -1,5 +1,5 @@
 # Primeira etapa: Build
-FROM eclipse-temurin:17-jdk-focal AS builder
+FROM maven:3.8.5-openjdk-17 as builder
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY .mvn .mvn
 COPY mvnw .
 
 RUN chmod +x ./mvnw
-#RUN mvn dependency:go-offline -B
+RUN mvn dependency:go-offline -B
 RUN mvn package -DskipTests
 
 # Executa o build
