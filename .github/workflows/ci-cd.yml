@@ -52,10 +52,11 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
-        push: false
+        file: ./Dockerfile
+        push: ${{ github.ref == 'refs/heads/main' }}
         tags: rodrigoamora/rodrigo-springboot:latest
-        build-args: |
-          MAVEN_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG"
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
   
   deploy:
     needs: build-and-test
