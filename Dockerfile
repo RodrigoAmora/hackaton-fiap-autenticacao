@@ -13,7 +13,7 @@ COPY . .
 RUN pwd && ls -la
 
 # Executa o build
-RUN mvn clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 # Segunda etapa: Runtime
 FROM eclipse-temurin:17-jre-focal
