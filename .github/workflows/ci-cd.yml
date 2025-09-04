@@ -76,7 +76,7 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         source: "target/*.jar"
-        target: "/home/${{ secrets.EC2_USER }}/app/app.jar"
+        target: "/home/${{ secrets.EC2_USERNAME }}/app/app.jar"
 
     - name: Restart app via SSH
       uses: appleboy/ssh-action@v1.0.3
