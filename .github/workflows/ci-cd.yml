@@ -78,9 +78,6 @@ jobs:
         source: "target/*.jar"
         target: "/home/${{ secrets.EC2_USERNAME }}/app/app.jar"
 
-    - name: Push Docker image
-      run: docker push rodrigoamora/rodrigo-springboot:latest
-
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v1.0.3
       with:
