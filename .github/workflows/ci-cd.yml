@@ -78,9 +78,6 @@ jobs:
       with:
         distribution: temurin
         java-version: '17'
-
-    - name: Build Docker image
-      run: docker build -t rodrigoamora/rodrigo-springboot .
     
     - name: Cache Maven
       uses: actions/cache@v3
@@ -98,7 +95,10 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Build project
-      run: mvn clean package -DskipTests
+      run: ./mvnw -B clean verify
+
+    - name: Build Docker image
+      run: docker build -t rodrigoamora/rodrigo-springboot:${{ github.sha }} .
 
     - name: Copy files to EC2
       uses: appleboy/scp-action@master
