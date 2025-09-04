@@ -1,13 +1,16 @@
 # Primeira etapa: Build
 FROM eclipse-temurin:17-jdk-focal AS builder
 
-WORKDIR /build
+WORKDIR /app
 
-# Copia os arquivos do projeto
-COPY . .
+COPY pom.xml .
+COPY src/ ./src/
+COPY .mvn .mvn
+COPY mvnw .
 
-# Dá permissão de execução ao mvnw
-#RUN chmod +x ./mvnw
+RUN chmod +x ./mvnw
+#RUN mvn dependency:go-offline -B
+RUN mvn package -DskipTests
 
 # Executa o build
 RUN ./mvnw clean package -DskipTests
@@ -15,6 +18,7 @@ RUN ./mvnw clean package -DskipTests
 # Segunda etapa: Runtime
 FROM eclipse-temurin:17-jre-focal
 
+RUN mkdir /app
 WORKDIR /app
 
 COPY --from=builder /build/target/*.jar app.jar
