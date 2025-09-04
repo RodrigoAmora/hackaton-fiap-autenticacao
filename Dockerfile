@@ -1,29 +1,25 @@
-# Etapa 1: Build
+# Primeira etapa: Build
 FROM maven:3.9.5-eclipse-temurin-17-focal AS builder
 
+# Define o diretório de trabalho
 WORKDIR /build
 
-# Copiar arquivos principais para cache
+# Copia todo o projeto
 COPY . .
 
-# Baixar dependências
-RUN ./mvnw dependency:go-offline
+# Executa o build usando mvn diretamente
+RUN mvn clean package -DskipTests
 
-
-# Build do projeto
-RUN ./mvnw clean package -DskipTests
-
-# Etapa 2: Runtime
-FROM eclipse-temurin:17-jre-jammy
+# Segunda etapa: Runtime
+FROM eclipse-temurin:17-jre-focal
 
 WORKDIR /app
 
-# Copiar JAR final
-COPY --from=builder /build/target/*1.0.jar app.jar
+# Copia o JAR da etapa de build
+COPY --from=builder /build/target/*.jar app.jar
 
 # Variáveis de ambiente
 ENV SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/fiap_auteticacao
-# A porta só é usada se configurada no Spring
 ENV SERVER_PORT=8080
 
 EXPOSE 8080
