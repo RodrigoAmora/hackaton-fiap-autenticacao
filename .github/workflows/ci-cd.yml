@@ -47,7 +47,7 @@ jobs:
       with:
         context: .
         push: false
-        tags: fiap-autenticacao:latest
+        tags: rodrigoamora/fiap-autenticacao:latest
         build-args: |
           MAVEN_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG"
   
@@ -84,6 +84,6 @@ jobs:
         script: |
           cd /home/${{ secrets.EC2_USERNAME }}/app
           docker-compose down || true
-          docker rmi fiap-autenticacao:latest || true
-          docker pull fiap-autenticacao:latest
+          docker rmi rodrigoamora/fiap-autenticacao:latest || true
+          docker pull rodrigoamora/fiap-autenticacao:latest
           docker-compose up -d
