@@ -80,6 +80,7 @@ jobs:
     - name: Cache Maven
       uses: actions/cache@v3
       with:
+        fetch-depth: 0
         path: ~/.m2
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
