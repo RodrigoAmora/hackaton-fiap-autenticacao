@@ -66,13 +66,16 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
+    - name: Build project
+      run: mvn clean package -DskipTests
+
     - name: Copy files to EC2
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: "docker-compose.yml,.env,Dockerfile"
+        source: "docker-compose.yml,.env,Dockerfile,target/*.jar"
         target: "/home/${{ secrets.EC2_USERNAME }}/app"
 
     - name: Deploy to EC2
