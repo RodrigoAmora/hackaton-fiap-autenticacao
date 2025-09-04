@@ -1,10 +1,9 @@
 FROM maven:3.8.5-openjdk-17 as builder
 WORKDIR /app
 
-COPY pom.xml .
 COPY src/ ./src/
 COPY .mvn .mvn
-COPY mvnw mvnw
+COPY mvnw pom.xml ./
 
 RUN chmod +x ./mvnw
 #RUN mvn dependency:go-offline -B
