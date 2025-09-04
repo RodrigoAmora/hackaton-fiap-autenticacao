@@ -76,6 +76,6 @@ jobs:
         script: |
           cd /home/${{ secrets.EC2_USERNAME }}/app
           docker-compose down || true
-          docker rmi fiap-autenticacao || true
-          docker pull fiap-autenticacao
+          docker rmi fiap-autenticacao:latest || true
+          docker pull fiap-autenticacao:latest
           docker-compose up -d
