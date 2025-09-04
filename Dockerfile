@@ -1,29 +1,28 @@
-# Primeira etapa: Build
-FROM maven:3.9.5-eclipse-temurin-17-focal AS builder
+# Primeira etapa: Construir a aplicação
+FROM maven:3.9.5-amazoncorretto-17 AS build
 
-WORKDIR /build
+WORKDIR /workspace
 
-# Copia o pom.xml primeiro para aproveitar o cache das dependências
-COPY pom.xml ./
+# Copie o pom.xml e baixe as dependências, isso melhora o cache do Docker
+COPY pom.xml .
 RUN mvn dependency:go-offline
-# Depois copie o resto do código
-RUN mkdir ./src
-COPY src ./src/
 
+# Copie o código fonte e construa o JAR
+COPY src src
+ARG MAVEN_SKIP_TEST=false
+RUN if [ "$MAVEN_SKIP_TEST" = "true" ] ; then mvn clean package -DskipTests ; else mvn clean package ; fi
 
-# Executa o build com mais detalhes de log
-RUN mvn clean package -DskipTests -X
+# Segunda etapa: Rodar a aplicação
+FROM amazoncorretto:17-alpine-jdk
 
-# Segunda etapa: Runtime
-FROM eclipse-temurin:17-jre-focal
-
-WORKDIR /app
-
-COPY --from=builder /build/target/*.jar app.jar
-
-ENV SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/fiap_auteticacao
-ENV SERVER_PORT=8080
+LABEL maintainer="ricardo@ricardo.net"
+LABEL version="1.0"
+LABEL description="FIAP - Tech Chalenger"
+LABEL name="Tech Chalenger"
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Copie o JAR da primeira etapa
+COPY --from=build /workspace/target/FiapAutenticacao-1.0.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "/app.jar"]
