@@ -23,8 +23,8 @@ RUN mkdir /src
 COPY src /src
 
 # Configura permissões e executa build
-RUN ./mvnw dependency:go-offline -B
-RUN ./mvnw package -DskipTests
+RUN mvn dependency:go-offline -B
+RUN mvn package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 # Define o comando de inicialização do seu projeto
