@@ -1,7 +1,7 @@
 # Primeira etapa: Build
 FROM maven:3.8.5-openjdk-17 as builder
 
-WORKDIR /build
+WORKDIR /app
 
 COPY pom.xml .
 COPY src/ ./src/
@@ -21,7 +21,7 @@ FROM eclipse-temurin:17-jre-focal
 RUN mkdir /app
 WORKDIR /app
 
-COPY --from=builder /build/target/*.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 # Configurações do MongoDB e da aplicação
 ENV SERVER_PORT=8080
