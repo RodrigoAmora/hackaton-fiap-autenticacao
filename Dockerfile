@@ -12,8 +12,7 @@ RUN mvn dependency:go-offline
 # Copie o código fonte e construa o JAR
 RUN mkdir /src
 COPY src /src/
-ARG MAVEN_SKIP_TEST=true
-RUN if [ "$MAVEN_SKIP_TEST" = "true" ] ; then mvn clean package -DskipTests ; else mvn clean package ; fi
+RUN mvn clean package -DskipTests
 
 
 # Segunda etapa: Runtime
