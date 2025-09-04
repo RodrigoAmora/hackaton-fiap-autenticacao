@@ -31,7 +31,10 @@ services:
     restart: unless-stopped
 
   fiap-autenticacao:
-    image: rodrigoamora/rodrigo-springboot:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: autenticacao
     container_name: 'fiap-autenticacao'
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo:27017/pagamentos?authSource=admin
