@@ -6,9 +6,9 @@ WORKDIR /build
 # Copia o pom.xml primeiro para aproveitar o cache das dependências
 COPY pom.xml ./
 RUN mvn dependency:go-offline
+# Depois copie o resto do código
+COPY src ./src/
 
-# Copia o resto do código
-COPY . .
 
 # Executa o build com mais detalhes de log
 RUN mvn clean package -DskipTests -X
