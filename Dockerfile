@@ -4,7 +4,7 @@ FROM maven:3.9.5-eclipse-temurin-17-focal AS builder
 WORKDIR /build
 
 # Copia o pom.xml primeiro para aproveitar o cache das dependências
-COPY pom.xml .
+COPY pom.xml ./
 RUN mvn dependency:go-offline
 
 # Copia o resto do código
