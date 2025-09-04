@@ -19,12 +19,14 @@ WORKDIR /app
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
-RUN mkdir /src
-COPY src /src
 
 # Configura permissões e executa build
 RUN chmod +x ./mvnw
 RUN ./mvnw dependency:go-offline -B
+
+RUN mkdir /src
+COPY src /src
+
 RUN ./mvnw package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
