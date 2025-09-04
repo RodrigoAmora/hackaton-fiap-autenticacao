@@ -19,7 +19,8 @@ WORKDIR /app
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
-COPY src src
+RUN mkdir /src
+COPY src /src
 
 # Configura permissões e executa build
 RUN ./mvnw dependency:go-offline -B
