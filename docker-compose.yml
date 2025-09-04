@@ -36,6 +36,7 @@ services:
       dockerfile: Dockerfile
       args:
         - MAVEN_SKIP_TEST=true
+    image: rodrigoamora/rodrigo-springboot:latest
     container_name: 'fiap-autenticacao'
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo:27017/pagamentos?authSource=admin
