@@ -3,17 +3,16 @@ FROM maven:3.8.5-openjdk-17 as builder
 
 WORKDIR /app
 
+# Copie o pom.xml e baixe as dependências, isso melhora o cache do Docker
 COPY pom.xml .
-COPY src/ ./src/
-COPY .mvn .mvn
-COPY mvnw .
+RUN mvn dependency:go-offline
 
-RUN chmod +x ./mvnw
-RUN mvn dependency:go-offline -B
-RUN mvn package -DskipTests
+# Copie o código fonte e construa o JAR
+RUN mkdir /src
+COPY src ./src/
+ARG MAVEN_SKIP_TEST=true
+RUN if [ "$MAVEN_SKIP_TEST" = "true" ] ; then mvn clean package -DskipTests ; else mvn clean package ; fi
 
-# Executa o build
-RUN ./mvnw clean package -DskipTests
 
 # Segunda etapa: Runtime
 FROM eclipse-temurin:17-jre-focal
