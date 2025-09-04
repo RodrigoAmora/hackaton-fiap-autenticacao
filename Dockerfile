@@ -12,7 +12,7 @@ RUN mvn dependency:go-offline
 # Copie o código fonte e construa o JAR
 RUN mkdir /src
 COPY src /src/
-RUN mvn clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 
 # Segunda etapa: Runtime
