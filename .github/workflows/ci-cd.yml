@@ -70,6 +70,9 @@ jobs:
       with:
         distribution: temurin
         java-version: '17'
+
+    - name: Build Docker image
+      run: docker build -t rodrigoamora/rodrigo-springboot .
     
     - name: Cache Maven
       uses: actions/cache@v3
