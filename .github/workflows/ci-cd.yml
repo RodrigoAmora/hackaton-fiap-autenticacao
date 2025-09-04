@@ -65,3 +65,72 @@ jobs:
           SPRING_DATA_MONGODB_HOST: localhost
           SPRING_DATA_MONGODB_PORT: 27017
           SPRING_DATA_MONGODB_DATABASE: test
+
+  deploy:
+    needs: [ build-and-push, test ]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' # Apenas deploy na main
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configurar AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Gerar SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy para EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} '
+            # Parar e remover containers antigos
+            docker-compose down || true
+            docker system prune -f
+          
+            # Atualizar docker-compose.yml
+            echo "version: \"3.8\"
+          
+            services:
+              app:
+                image: ${{ secrets.DOCKER_HUB_USERNAME }}/fiap-autenticacao:latest
+                container_name: fiap-autenticacao
+                ports:
+                  - \"8080:8080\"
+                environment:
+                  - SPRING_DATA_MONGODB_HOST=mongodb
+                  - SPRING_DATA_MONGODB_PORT=27017
+                  - SPRING_DATA_MONGODB_DATABASE=fiapauth
+                depends_on:
+                  - mongodb
+                restart: always
+          
+              mongodb:
+                image: mongo:latest
+                container_name: mongodb
+                ports:
+                  - \"27017:27017\"
+                volumes:
+                  - mongodb_data:/data/db
+                restart: always
+          
+            volumes:
+              mongodb_data:" > docker-compose.yml
+          
+            # Pull da nova imagem e start dos containers
+            docker-compose pull
+            docker-compose up -d
+          '
+
+      - name: Verificar deploy
+        run: |
+          sleep 30  # Aguarda a inicialização dos serviços
+          curl --fail http://${{ secrets.EC2_HOST }}:8080/actuator/health || exit 1
