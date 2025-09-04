@@ -54,7 +54,6 @@ jobs:
         context: .
         file: ./Dockerfile
         push: ${{ github.ref == 'refs/heads/main' }}
-        tags: rodrigoamora/rodrigo-springboot:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
   
