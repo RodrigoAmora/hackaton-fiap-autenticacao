@@ -9,8 +9,7 @@ RUN mvn dependency:go-offline
 
 # Copie o código fonte e construa o JAR
 COPY src src
-ARG MAVEN_SKIP_TEST=false
-RUN if [ "$MAVEN_SKIP_TEST" = "true" ] ; then mvn clean package -DskipTests ; else mvn clean package ; fi
+RUN mvn clean package -DskipTests
 
 # Segunda etapa: Rodar a aplicação
 FROM amazoncorretto:17-alpine-jdk
