@@ -1,6 +1,7 @@
 # Primeira etapa: Build
 FROM maven:3.8.5-openjdk-17 as builder
 
+RUN mkdir /app
 WORKDIR /app
 
 # Copie o pom.xml e baixe as dependências, isso melhora o cache do Docker
