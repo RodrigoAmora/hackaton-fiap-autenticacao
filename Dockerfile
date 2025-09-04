@@ -1,11 +1,12 @@
 # Primeira etapa: Build
 FROM maven:3.8.5-openjdk-17 as builder
 
-RUN mkdir /app
-WORKDIR /app
+RUN mkdir /build
+WORKDIR /build
+
 
 # Copie o pom.xml e baixe as dependências, isso melhora o cache do Docker
-COPY pom.xml .
+COPY pom.xml ./
 RUN mvn dependency:go-offline
 
 # Copie o código fonte e construa o JAR
@@ -21,7 +22,7 @@ FROM eclipse-temurin:17-jre-focal
 RUN mkdir /app
 WORKDIR /app
 
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder /build/target/*.jar app.jar
 
 # Configurações do MongoDB e da aplicação
 ENV SERVER_PORT=8080
