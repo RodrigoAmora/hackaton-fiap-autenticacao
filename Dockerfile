@@ -20,7 +20,7 @@ COPY src/ ./src/
 RUN ./mvnw package -DskipTests
 
 # Stage final
-FROM eclipse-temurin:17-jdk as prod
+FROM eclipse-temurin:17-jdk-focal as prod
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
