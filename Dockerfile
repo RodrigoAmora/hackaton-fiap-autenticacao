@@ -1,6 +1,5 @@
-
 # Define a imagem base
-FROM openjdk:17-oracle
+FROM eclipse-temurin:17-jdk-focal
 
 LABEL maintainer="rodrigo.amora.freitas@gmail.com"
 LABEL version="1.0.7"
@@ -23,12 +22,13 @@ COPY pom.xml .
 COPY src src
 
 # Configura permissões e executa build
-RUN ./mvnw dependency:go-offline -B
+RUN chmod +x mvnw
 RUN ./mvnw package -DskipTests
-RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
-# Define o comando de inicialização do seu projeto
-CMD ["java", "-jar", "/app/FiapAutenticacao.jar"]
+# Configura a aplicação
+FROM eclipse-temurin:17-jre-focal
+WORKDIR /app
+COPY --from=0 /app/target/*.jar app.jar
 
-# Expõe a porta do seu projeto
 EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
