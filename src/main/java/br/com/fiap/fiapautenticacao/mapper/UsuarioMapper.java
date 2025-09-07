@@ -39,15 +39,10 @@ public class UsuarioMapper {
     }
 
     private Role buscarRole(Role role) {
-        if (role == null) {
-            return getDefaultRole();
-        } else {
-            return Optional.ofNullable(role)
-                    .map(Role::getName)
-                    .map(name -> roleRepository.findByName(name)
-                            .orElseGet(this::getDefaultRole))
-                    .orElseGet(this::getDefaultRole);
-        }
+        return Optional.ofNullable(role)
+                .map(Role::getName)
+                .flatMap(roleRepository::findByName)
+                .orElseGet(this::getDefaultRole);
     }
 
     private Role getDefaultRole() {
