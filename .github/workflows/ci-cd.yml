@@ -27,7 +27,7 @@ jobs:
           mongodb-version: '6.0'
 
       - name: Build and Test
-        run: mvn -B clean verify
+        run: mvn -B clean verify -Pprod
 
       - name: Login to Docker Hub
         if: github.ref == 'refs/heads/main'
