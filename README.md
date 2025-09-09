@@ -1,7 +1,7 @@
 # fiap-autenticacao
 Descrição
 ---------
-Micro-Serviço de cadastro e autenticação de usuário da prova substituiva da pós de Arquitetura de Software da FIAP.
+Micro-Serviço de cadastro e autenticação de usuário da prova substitutiva da pós de Arquitetura de Software da FIAP.
 
 Participantes
 -------------
