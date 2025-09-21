@@ -1,0 +1,57 @@
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: 'mongo'
+    platform: linux/amd64 #Para MacBooks com o processador M+(M1, M2, M3,etc...)
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - fiap-network
+    restart: 'unless-stopped'
+    healthcheck:
+      test: [ "CMD", "mongosh", "--username", "${MONGO_ROOT_USERNAME}", "--password", "${MONGO_ROOT_PASSWORD}", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    platform: linux/amd64
+    ports:
+      - 8091:8091
+    links:
+      - mongo
+    networks:
+      - fiap-network
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  fiap-autenticacao:
+    image: rodrigoamora/rodrigo-springboot:latest
+    container_name: 'fiap-autenticacao'
+    platform: linux/amd64 #Para MacBooks com o processador M+(M1, M2, M3,etc...)
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo:27017/pagamentos?authSource=admin
+      - SPRING_DATA_MONGODB_HOST=mongo
+      - SPRING_DATA_MONGODB_PORT=27017
+    ports:
+      - "8080:8080"
+    networks:
+      - fiap-network
+    depends_on:
+      - mongo
+    restart: always
+
+networks:
+  fiap-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
