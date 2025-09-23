@@ -23,6 +23,8 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private static final String MENSAGEM_SENHA_INVALIDA = "Senha inválida, a senha deve ter: entre 8 e 30 carateres, letra maiuscula minuscula, e caracter especial.";
+
     public UsuarioService(UsuarioMapper usuarioMapper,
                           UsuarioRepository usuarioRepository,
                           PasswordEncoder passwordEncoder) {
@@ -43,7 +45,7 @@ public class UsuarioService {
         if (validarSenha(senha)) {
             usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         } else {
-            lancarUsuarioException("Senha inválida, a senha deve ter: emtre 8 e 30 carateres, letra maiuscula minuscula, e caracter especial.");
+            lancarUsuarioException(MENSAGEM_SENHA_INVALIDA);
         }
 
         usuario = usuarioRepository.save(usuario);
@@ -60,7 +62,7 @@ public class UsuarioService {
         if (validarSenha(senha)) {
             usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         } else {
-            lancarUsuarioException("Senha inválida, a senha deve ter: emtre 8 e 30 carateres, letra maiuscula minuscula, e caracter especial.");
+            lancarUsuarioException(MENSAGEM_SENHA_INVALIDA);
         }
 
         usuario = usuarioRepository.save(usuario);
