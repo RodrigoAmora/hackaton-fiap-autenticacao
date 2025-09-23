@@ -33,13 +33,38 @@ public class UsuarioService {
 
     public UsuarioDTO salvarUsuario(UsuarioRequest request) {
         usuarioRepository.findByEmail(request.email())
-                         .ifPresent(usuario -> {
-                             throw new UsuarioException("Usuário com e-mail "+request.email()+" já está cadastrado");
-                         });
+                .ifPresent(usuario -> {
+                    throw new UsuarioException("Usuário com e-mail "+request.email()+" já está cadastrado");
+                });
 
         Usuario usuario = usuarioMapper.mapearParaUsuario(request);
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+
+        String senha = usuario.getSenha();
+        if (validarSenha(senha)) {
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        } else {
+            lancarUsuarioException("Senha inválida, a senha deve ter: emtre 8 e 30 carateres, letra maiuscula minuscula, e caracter especial.");
+        }
+
         usuario = usuarioRepository.save(usuario);
+        return usuarioMapper.mapearParaUsuarioDTO(usuario);
+    }
+
+    public UsuarioDTO editarUsuario(String usuarioId, UsuarioRequest request) {
+        buscarUsuarioId(usuarioId);
+
+        Usuario usuario = usuarioMapper.mapearParaUsuario(request);
+        usuario.setId(usuarioId);
+
+        String senha = usuario.getSenha();
+        if (validarSenha(senha)) {
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        } else {
+            lancarUsuarioException("Senha inválida, a senha deve ter: emtre 8 e 30 carateres, letra maiuscula minuscula, e caracter especial.");
+        }
+
+        usuario = usuarioRepository.save(usuario);
+
         return usuarioMapper.mapearParaUsuarioDTO(usuario);
     }
 

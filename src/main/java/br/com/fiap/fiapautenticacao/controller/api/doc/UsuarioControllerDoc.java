@@ -22,6 +22,12 @@ public interface UsuarioControllerDoc {
     })
     ResponseEntity<?> create(UsuarioRequest request);
 
+    @Operation(summary = "Editar Usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Edição das infomações de Usuário.", content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
+    })
+    ResponseEntity<UsuarioDTO> edit(String id, UsuarioRequest request);
+
     @Operation(summary = "Buscar Usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Buscar Usuário pelo id.", content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),

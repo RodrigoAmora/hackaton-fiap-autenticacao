@@ -27,6 +27,12 @@ public class UsuarioController implements UsuarioControllerDoc {
     }
 
     @Override
+    @PutMapping
+    public ResponseEntity<UsuarioDTO> edit(@PathVariable(name = "id") String id, @RequestBody UsuarioRequest request) {
+        return ResponseEntity.ok(usuarioService.editarUsuario(id, request));
+    }
+
+    @Override
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> buscarUsuarioPeloId(@PathVariable(name = "id") String id) {
         return ResponseEntity.ok(usuarioService.buscarUsuarioPeloId(id));
