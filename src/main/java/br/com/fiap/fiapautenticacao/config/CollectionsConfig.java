@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Configuration
 @ConditionalOnClass(Mono.class)
 public class CollectionsConfig {
@@ -39,25 +41,13 @@ public class CollectionsConfig {
     }
 
     private void createRolesIfDontExist() {
-        if (this.roleRepository.findByName(ERole.ROLE_ADMIN).isEmpty()) {
-            Role roleAdmin = new Role();
-            roleAdmin.setName(ERole.ROLE_ADMIN);
-
-            this.roleRepository.save(roleAdmin);
-        }
-
-        if (this.roleRepository.findByName(ERole.ROLE_MODERATOR).isEmpty()) {
-            Role roleModerator = new Role();
-            roleModerator.setName(ERole.ROLE_MODERATOR);
-
-            this.roleRepository.save(roleModerator);
-        }
-
-        if (this.roleRepository.findByName(ERole.ROLE_USER).isEmpty()) {
-            Role roleUser = new Role();
-            roleUser.setName(ERole.ROLE_USER);
-
-            this.roleRepository.save(roleUser);
+        List<ERole> eRoles = List.of(ERole.ROLE_ADMIN, ERole.ROLE_MODERATOR, ERole.ROLE_USER);
+        for (ERole eRole : eRoles) {
+            if (this.roleRepository.findByName(eRole).isEmpty()) {
+                Role role = new Role();
+                role.setName(eRole);
+                this.roleRepository.save(role);
+            }
         }
     }
 
