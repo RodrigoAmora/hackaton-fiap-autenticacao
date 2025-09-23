@@ -68,6 +68,18 @@ public class UsuarioService {
         return usuarioMapper.mapearParaUsuarioDTO(usuario);
     }
 
+    public void removerUsuario(String usuarioId) {
+        Usuario usuario = buscarUsuarioId(usuarioId);
+        // Realizando a anonimização dos dados do usuáirio
+        usuario.setEmail(null);
+        usuario.setCpf(null);
+        usuario.setDataNascimento(null);
+        usuario.setRole(null);
+        usuario.setSenha(null);
+
+        usuarioRepository.save(usuario);
+    }
+
     public UsuarioDTO buscarUsuarioPeloId(String id) {
         Usuario usuario = buscarUsuarioId(id);
         return usuarioMapper.mapearParaUsuarioDTO(usuario);

@@ -5,6 +5,7 @@ import br.com.fiap.fiapautenticacao.dto.UsuarioDTO;
 import br.com.fiap.fiapautenticacao.dto.request.UsuarioRequest;
 import br.com.fiap.fiapautenticacao.service.UsuarioService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -30,6 +31,13 @@ public class UsuarioController implements UsuarioControllerDoc {
     @PutMapping
     public ResponseEntity<UsuarioDTO> edit(@PathVariable(name = "id") String id, @RequestBody UsuarioRequest request) {
         return ResponseEntity.ok(usuarioService.editarUsuario(id, request));
+    }
+
+    @Override
+    @DeleteMapping
+    public HttpStatus remover(@PathVariable(name = "id") String id) {
+        usuarioService.removerUsuario(id);
+        return HttpStatus.NO_CONTENT;
     }
 
     @Override

@@ -57,7 +57,11 @@ class UsuarioServiceTest {
     @BeforeEach
     void setUp() {
         usuario = new Usuario();
-        usuario.setId("1");
+        usuario.setId("aed6e6b2-ab03-4575-bcbc-46e50eb519cf");
+        usuario.setCpf("11122233344455");
+        usuario.setDataNascimento(LocalDate.now());
+        usuario.setDataCadastro(LocalDateTime.now());
+        usuario.setNome("Fulano Silva");
         usuario.setEmail("teste@teste.com");
         usuario.setSenha("fiap@2025");
 
@@ -203,7 +207,7 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve editar usuário com sucesso")
     void deveEditarUsuarioComSucesso() {
-        String usuarioId = "123";
+        String usuarioId = usuario.getId();
         String senhaEncriptada = "senhaEncriptada123";
 
         UsuarioRequest request = new UsuarioRequest(
@@ -277,7 +281,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve lançar exceção ao editar usuário com senha inválida")
     void deveLancarExcecaoAoEditarUsuarioComSenhaInvalida() {
         // Arrange
-        String usuarioId = "123";
+        String usuarioId = usuario.getId();
         UsuarioRequest request = new UsuarioRequest(
                 "João Silva",
                 "senha123", // Senha inválida (falta caractere especial e maiúscula)
@@ -314,7 +318,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve lançar exceção quando usuário não encontrado")
     void deveLancarExcecaoQuandoUsuarioNaoEncontrado() {
         // Arrange
-        String usuarioId = "id-inexistente";
+        String usuarioId = usuario.getId();
         UsuarioRequest request = new UsuarioRequest(
                 "João Silva",
                 "senha123",
@@ -341,7 +345,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve manter o mesmo ID ao editar usuário")
     void deveManterMesmoIdAoEditarUsuario() {
         // Arrange
-        String usuarioId = "123";
+        String usuarioId = usuario.getId();
 
         Usuario usuarioExistente = new Usuario();
         usuarioExistente.setId(usuarioId);
@@ -374,6 +378,65 @@ class UsuarioServiceTest {
         // Assert
         verify(usuarioRepository).save(argThat(usuario ->
                 usuarioId.equals(usuario.getId())
+        ));
+    }
+
+    @Test
+    @DisplayName("Deve anonimizar dados do usuário com sucesso")
+    void deveAnonimizarDadosDoUsuarioComSucesso() {
+        // Arrange
+        String usuarioId = usuario.getId();
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+
+        // Act
+        usuarioService.removerUsuario(usuarioId);
+
+        // Assert
+        verify(usuarioRepository).findById(usuarioId);
+        verify(usuarioRepository).save(argThat(usuario -> {
+            return usuario.getId().equals(usuarioId) &&
+                    usuario.getEmail() == null &&
+                    usuario.getCpf() == null &&
+                    usuario.getDataNascimento() == null &&
+                    usuario.getRole() == null &&
+                    usuario.getSenha() == null &&
+                    usuario.getNome() != null; // Nome não deve ser anonimizado
+        }));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao tentar remover usuário inexistente")
+    void deveLancarExcecaoAoRemoverUsuarioInexistente() {
+        // Arrange
+        String usuarioId = usuario.getId();
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> usuarioService.removerUsuario(usuarioId))
+                .isInstanceOf(UsuarioNaoEncontradoException.class)
+                .hasMessage("Usuário não encontrado");
+
+        verify(usuarioRepository).findById(usuarioId);
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve manter o ID do usuário após anonimização")
+    void deveManterIdUsuarioAposAnonimizacao() {
+        // Arrange
+        String usuarioId = usuario.getId();
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+
+        // Act
+        usuarioService.removerUsuario(usuarioId);
+
+        // Assert
+        verify(usuarioRepository).save(argThat(usuario ->
+                usuario.getId().equals(usuarioId)
         ));
     }
 
