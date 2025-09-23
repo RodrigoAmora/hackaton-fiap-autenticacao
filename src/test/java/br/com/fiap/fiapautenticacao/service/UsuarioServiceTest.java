@@ -3,6 +3,7 @@ package br.com.fiap.fiapautenticacao.service;
 import br.com.fiap.fiapautenticacao.dto.UsuarioDTO;
 import br.com.fiap.fiapautenticacao.dto.request.UsuarioRequest;
 import br.com.fiap.fiapautenticacao.exception.UsuarioException;
+import br.com.fiap.fiapautenticacao.exception.UsuarioNaoEncontradoException;
 import br.com.fiap.fiapautenticacao.mapper.UsuarioMapper;
 import br.com.fiap.fiapautenticacao.model.Usuario;
 import br.com.fiap.fiapautenticacao.model.role.ERole;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,8 +30,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
@@ -55,7 +59,7 @@ class UsuarioServiceTest {
         usuario = new Usuario();
         usuario.setId("1");
         usuario.setEmail("teste@teste.com");
-        usuario.setSenha("senha123");
+        usuario.setSenha("fiap@2025");
 
         Role role = new Role();
         role.setName(ERole.ROLE_USER);
@@ -68,16 +72,62 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve salvar um novo usuário com sucesso")
     void deveSalvarNovoUsuarioComSucesso() {
-        when(usuarioRepository.findByEmail(usuarioRequest.email())).thenReturn(Optional.empty());
-        when(usuarioMapper.mapearParaUsuario(usuarioRequest)).thenReturn(usuario);
-        when(passwordEncoder.encode(usuario.getSenha())).thenReturn("senhaEncriptada");
-        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
-        when(usuarioMapper.mapearParaUsuarioDTO(usuario)).thenReturn(usuarioDTO);
+        // Arrange
+        String senhaEncriptada = "senhaEncriptada123";
 
+        UsuarioRequest usuarioRequest = new UsuarioRequest(
+                "João Silva",
+                "Teste@123", // Senha válida com os requisitos necessários
+                "joao@email.com",
+                "12345678900",
+                LocalDate.of(1990, 1, 1),
+                getRoleUser()
+        );
+
+        Usuario usuarioMapeado = new Usuario();
+        usuarioMapeado.setNome("João Silva");
+        usuarioMapeado.setSenha("Teste@123");
+        usuarioMapeado.setEmail("joao@email.com");
+        usuarioMapeado.setCpf("12345678900");
+        usuarioMapeado.setDataNascimento(LocalDate.of(1990, 1, 1));
+        usuarioMapeado.setRole(getRoleUser());
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO(
+                "123",
+                "João Silva",
+                "joao@email.com",
+                "12345678900",
+                LocalDate.of(1990, 1, 1),
+                LocalDateTime.now(),
+                getRoleUser()
+        );
+
+        // Mocks
+        when(usuarioRepository.findByEmail(usuarioRequest.email())).thenReturn(Optional.empty());
+        when(usuarioMapper.mapearParaUsuario(usuarioRequest)).thenReturn(usuarioMapeado);
+        when(passwordEncoder.encode(anyString())).thenReturn(senhaEncriptada);
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioMapeado);
+        when(usuarioMapper.mapearParaUsuarioDTO(any(Usuario.class))).thenReturn(usuarioDTO);
+
+        // Act
         UsuarioDTO resultado = usuarioService.salvarUsuario(usuarioRequest);
 
+        // Assert
         assertThat(resultado).isNotNull();
+        assertThat(resultado.nome()).isEqualTo(usuarioRequest.nome());
         assertThat(resultado.email()).isEqualTo(usuarioRequest.email());
+        assertThat(resultado.cpf()).isEqualTo(usuarioRequest.cpf());
+        assertThat(resultado.dataNascimento()).isEqualTo(usuarioRequest.dataNascimento());
+        assertThat(resultado.role().getName()).isEqualTo(ERole.ROLE_USER);
+
+        verify(usuarioRepository).findByEmail(usuarioRequest.email());
+        verify(usuarioMapper).mapearParaUsuario(usuarioRequest);
+        verify(usuarioRepository).save(argThat(usuario ->
+                usuario.getNome().equals(usuarioRequest.nome()) &&
+                        usuario.getEmail().equals(usuarioRequest.email()) &&
+                        usuario.getSenha().equals(senhaEncriptada)
+        ));
+        verify(usuarioMapper).mapearParaUsuarioDTO(any(Usuario.class));
     }
 
     @Test
@@ -108,7 +158,7 @@ class UsuarioServiceTest {
         when(usuarioRepository.findById("999")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> usuarioService.buscarUsuarioPeloId("999"))
-                .isInstanceOf(UsuarioException.class)
+                .isInstanceOf(UsuarioNaoEncontradoException.class)
                 .hasMessage("Usuário não encontrado");
     }
 
@@ -146,7 +196,192 @@ class UsuarioServiceTest {
         when(usuarioRepository.findByEmail("inexistente@teste.com")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> usuarioService.buscarUsuarioPorEmail("inexistente@teste.com"))
-                .isInstanceOf(UsuarioException.class)
+                .isInstanceOf(UsuarioNaoEncontradoException.class)
                 .hasMessageContaining("não cadastrado");
     }
+
+    @Test
+    @DisplayName("Deve editar usuário com sucesso")
+    void deveEditarUsuarioComSucesso() {
+        String usuarioId = "123";
+        String senhaEncriptada = "senhaEncriptada123";
+
+        UsuarioRequest request = new UsuarioRequest(
+                "João Silva",
+                "Teste@123", // Senha válida com os requisitos necessários
+                "joao@email.com",
+                "12345678900",
+                LocalDate.of(1990, 1, 1),
+                getRoleUser()
+        );
+
+        Usuario usuarioExistente = new Usuario();
+        usuarioExistente.setId(usuarioId);
+
+        Usuario usuarioMapeado = new Usuario();
+        usuarioMapeado.setId(usuarioId);
+        usuarioMapeado.setNome("João Silva");
+        usuarioMapeado.setSenha("Teste@123");
+        usuarioMapeado.setEmail("joao@email.com");
+        usuarioMapeado.setCpf("12345678900");
+        usuarioMapeado.setDataNascimento(LocalDate.of(1990, 1, 1));
+        usuarioMapeado.setRole(getRoleUser());
+
+        Usuario usuarioSalvo = new Usuario();
+        usuarioSalvo.setId(usuarioId);
+        usuarioSalvo.setNome("João Silva");
+        usuarioSalvo.setSenha(senhaEncriptada);
+        usuarioSalvo.setEmail("joao@email.com");
+        usuarioSalvo.setCpf("12345678900");
+        usuarioSalvo.setDataNascimento(LocalDate.of(1990, 1, 1));
+        usuarioSalvo.setRole(getRoleUser());
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO(
+                usuarioId,
+                "João Silva",
+                "joao@email.com",
+                "12345678900",
+                LocalDate.of(1990, 1, 1),
+                LocalDateTime.now(),
+                getRoleUser()
+        );
+
+        // Mock dos comportamentos
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuarioExistente));
+        when(usuarioMapper.mapearParaUsuario(request)).thenReturn(usuarioMapeado);
+        when(passwordEncoder.encode(usuarioMapeado.getSenha())).thenReturn(senhaEncriptada);
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioSalvo);
+        when(usuarioMapper.mapearParaUsuarioDTO(usuarioSalvo)).thenReturn(usuarioDTO);
+
+        // Act
+        UsuarioDTO resultado = usuarioService.editarUsuario(usuarioId, request);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(usuarioId, resultado.id());
+        assertEquals("João Silva", resultado.nome());
+        assertEquals("joao@email.com", resultado.email());
+        assertEquals("12345678900", resultado.cpf());
+        assertEquals(LocalDate.of(1990, 1, 1), resultado.dataNascimento());
+        assertEquals(ERole.ROLE_USER, resultado.role().getName());
+
+        // Verifica a ordem das chamadas
+        InOrder inOrder = inOrder(usuarioRepository, usuarioMapper, passwordEncoder);
+        inOrder.verify(usuarioRepository).findById(usuarioId);
+        inOrder.verify(usuarioMapper).mapearParaUsuario(request);
+        inOrder.verify(usuarioRepository).save(any(Usuario.class));
+        inOrder.verify(usuarioMapper).mapearParaUsuarioDTO(usuarioSalvo);
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao editar usuário com senha inválida")
+    void deveLancarExcecaoAoEditarUsuarioComSenhaInvalida() {
+        // Arrange
+        String usuarioId = "123";
+        UsuarioRequest request = new UsuarioRequest(
+                "João Silva",
+                "senha123", // Senha inválida (falta caractere especial e maiúscula)
+                "joao@email.com",
+                "12345678900",
+                LocalDate.of(1990, 1, 1),
+                getRoleUser()
+        );
+
+        Usuario usuarioExistente = new Usuario();
+        usuarioExistente.setId(usuarioId);
+
+        Usuario usuarioMapeado = new Usuario();
+        usuarioMapeado.setSenha("senha123");
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuarioExistente));
+        when(usuarioMapper.mapearParaUsuario(request)).thenReturn(usuarioMapeado);
+
+        // Act & Assert
+        UsuarioException exception = assertThrows(UsuarioException.class, () -> {
+            usuarioService.editarUsuario(usuarioId, request);
+        });
+
+        assertTrue(exception.getMessage().contains("Senha inválida"));
+
+        verify(usuarioRepository).findById(usuarioId);
+        verify(usuarioMapper).mapearParaUsuario(request);
+        verify(passwordEncoder, never()).encode(anyString());
+        verify(usuarioRepository, never()).save(any(Usuario.class));
+    }
+
+
+    @Test
+    @DisplayName("Deve lançar exceção quando usuário não encontrado")
+    void deveLancarExcecaoQuandoUsuarioNaoEncontrado() {
+        // Arrange
+        String usuarioId = "id-inexistente";
+        UsuarioRequest request = new UsuarioRequest(
+                "João Silva",
+                "senha123",
+                "joao@email.com",
+                "12345678900",
+                LocalDate.of(1990, 1, 1),
+                getRoleUser()
+        );
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> {
+            usuarioService.editarUsuario(usuarioId, request);
+        });
+
+        verify(usuarioRepository).findById(usuarioId);
+        verify(usuarioMapper, never()).mapearParaUsuario(any());
+        verify(passwordEncoder, never()).encode(anyString());
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve manter o mesmo ID ao editar usuário")
+    void deveManterMesmoIdAoEditarUsuario() {
+        // Arrange
+        String usuarioId = "123";
+
+        Usuario usuarioExistente = new Usuario();
+        usuarioExistente.setId(usuarioId);
+
+        UsuarioRequest request = new UsuarioRequest(
+                "João Silva",
+                "Teste@123",
+                "joao@email.com",
+                "12345678900",
+                LocalDate.of(1990, 1, 1),
+                getRoleUser()
+        );
+
+        Usuario usuarioMapeado = new Usuario();
+        usuarioMapeado.setNome(request.nome());
+        usuarioMapeado.setSenha(request.senha());
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuarioExistente));
+        when(usuarioMapper.mapearParaUsuario(request)).thenReturn(usuarioMapeado);
+        when(passwordEncoder.encode(anyString())).thenReturn("senhaEncriptada");
+        when(usuarioRepository.save(any())).thenAnswer(invocation -> {
+            Usuario usuarioParaSalvar = invocation.getArgument(0);
+            assertThat(usuarioParaSalvar.getId()).isEqualTo(usuarioId);
+            return usuarioParaSalvar;
+        });
+
+        // Act
+        usuarioService.editarUsuario(usuarioId, request);
+
+        // Assert
+        verify(usuarioRepository).save(argThat(usuario ->
+                usuarioId.equals(usuario.getId())
+        ));
+    }
+
+    private Role getRoleUser() {
+        ERole eRole = ERole.ROLE_USER;
+        Role role = new Role();
+        role.setName(eRole);
+        return role;
+    }
+
 }
