@@ -42,9 +42,9 @@ http://localhost:8080/redoc
 ##
 Na pasta <b>`Postman`</b> contém a collection para usar os endpoints via Postman.
 
-Monitoração do projeto
-----------------------
-A monitoração do projeto para verificar a saúde da aplicação e os recursos utilizados:
+Monitoramento do projeto
+------------------------
+A monitoramento do projeto para verificar a saúde da aplicação e os recursos utilizados:
 ```shell script
 http://localhost:8080/health
 ```
@@ -53,25 +53,25 @@ Banco de dados
 --------------
 O projeto usa o MongoDB como banco da dados.
 
-Para rodar o MongoDB localmente, baixe o MongoDB para a sua máquina, descompacte em algum diretório em configure a variável de ambiente MONGO_HOME com o valor <b>`diretório_do_mongo/bin`</b>. <br>
+Para rodar o MongoDB localmente, baixe o MongoDB na sua máquina, descompacte em algum diretório em configure a variável de ambiente MONGO_HOME com o valor <b>`diretório_do_mongo/bin`</b>. <br>
 Após isso, no terminal vá até o <b>`MONGO_HOME/bin`</b> e execute o comando abaixo para iniciar o MongoDB:
 ```shell script
 sudo ./mongod --dbpath /usr/local/var/mongodb
 ```
 
 ##
-<b>Vairáveis de ambiente:</b><br>
-Crie o arquivo `.env` na raiz do projeto e adicione as seguintes variáveis:
+Após baixar e descompactar o MongoDB na sua máquina e cria a variável de ambiente MONGO_HOME, você pode excutar o Shellscript <b>`run_mongo.sh`</b> na raiz do projeto.
+```shell script
+./run_mongo.sh
+```
+
+Configuração do projeto
+-----------------------
+Crie o arquivo <b>`.env`</b> na raiz do projeto e adicione as seguintes variáveis:
 * MONGO_EXPRESS_USERNAME - Usuário do Mongo Express
 * MONGO_EXPRESS_PASSWORD - Senha do Mongo Express
 * MONGO_ROOT_USERNAME - Usuário do MongoDB
 * MONGO_ROOT_PASSWORD - Senha do MongoDB
-
-##
-Após baixar e descompactar o Mongo na sua máquina e cria a variável de ambiente MONGO_HOME, você pode excutar o Shellscript run_mongo na raiz do projeto.
-```shell script
-./run_mongo.sh
-```
 
 Gerando o arquivo .jar
 ----------------------
@@ -97,6 +97,8 @@ Para gerar o relatório de cobertura de testes do projeto com o JaCoCo, execute 
 ```shell script
 mvn clean test jacoco:report
 ```
+
+<b>OBS:</b> Certifique-se de que o MongoDB esteja rodando.
 
 Rodando o projeto localmente
 ----------------------------
