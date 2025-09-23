@@ -13,12 +13,12 @@ public class ConfigController {
     }
 
     @GetMapping("/redoc")
-    public RedirectView redirectRedoc() {
+    public RedirectView redirectToRedoc() {
         return new RedirectView("/redoc.html");
     }
 
     @GetMapping("/health")
-    public RedirectView health() {
+    public RedirectView redirectToHealth() {
         return new RedirectView("/actuator/health");
     }
 
