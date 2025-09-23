@@ -14,7 +14,7 @@ public record UsuarioRequest(
         @JsonProperty("nome")
         String nome,
 
-        @Schema(description = "Senha do usuário", example = "senha123")
+        @Schema(description = "Senha do usuário", example = "Fiap@2025")
         @JsonProperty("senha")
         String senha,
 
