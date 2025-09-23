@@ -1,10 +1,12 @@
-# fiap-autenticacao
+# hackaton-fiap-autenticacao
 Descrição
 ---------
-Micro-Serviço de cadastro e autenticação de usuário da prova substitutiva da pós de Arquitetura de Software da FIAP.
+Micro-Serviço de cadastro e autenticação de usuário do Hackaton da pós de Arquitetura de Software da FIAP.
 
 Participantes
 -------------
+* Bruno do Amor Divino da Paixão - RM360643
+* Lucas Matheus Testa - RM360642
 * Rodrigo de Lima Amora de Freitas - RM360219
 
 Dependências
@@ -13,6 +15,8 @@ O projeto usa o Java 17 e as seguintes dependências:
 
 * Spring Boot 3.5.4
 * Spring Security
+* Spring Data JPA
+* Spring dotenv
 * Lombok
 * Devtools
 * MongoDB
@@ -71,21 +75,32 @@ Após baixar e descompactar o Mongo na sua máquina e cria a variável de ambien
 
 Gerando o arquivo .jar
 ----------------------
-Para gerar o arquivo <b>.jar</b>, execute o comando via terminal no diretório raiz do projeto:
+Para gerar o arquivo <b>.jar</b>, execute o comando na raiz do projeto:
 ```shell script
 mvn clean install -P{profile} -DskipTests
 ```
 
 Rodando os testes
 -----------------
-Para rodar os testes, execute o comando no terminal na raiz do projeto:
+<b>A cobertura de testes do projeto:</b>
+![A cobertura de testes do projeto:](imagens/cobertura-de-testes.png)
+
+##
+
+Para rodar os testes, execute o comando na raiz do projeto:
 ```shell script
 mvn test
 ```
 
+##
+Para gerar o relatório de cobertura de testes do projeto com o JaCoCo, execute o comando na raiz do projeto:
+```shell script
+mvn clean test jacoco:report
+```
+
 Rodando o projeto localmente
 ----------------------------
-Para iniciar a aplicação, execute o comando no terminal na raiz do projeto:
+Para iniciar a aplicação, execute o comando na raiz do projeto:
 
 ```shell script
 mvn spring-boot:run
