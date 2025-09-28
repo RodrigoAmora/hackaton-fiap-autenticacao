@@ -34,7 +34,7 @@ public class UsuarioController implements UsuarioControllerDoc {
     }
 
     @Override
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public HttpStatus remover(@PathVariable(name = "id") String id) {
         usuarioService.removerUsuario(id);
         return HttpStatus.NO_CONTENT;
