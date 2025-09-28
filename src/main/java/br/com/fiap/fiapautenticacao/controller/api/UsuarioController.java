@@ -28,7 +28,7 @@ public class UsuarioController implements UsuarioControllerDoc {
     }
 
     @Override
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<UsuarioDTO> edit(@PathVariable(name = "id") String id, @RequestBody UsuarioRequest request) {
         return ResponseEntity.ok(usuarioService.editarUsuario(id, request));
     }
