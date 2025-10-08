@@ -7,36 +7,6 @@
 	},
 	"item": [
 		{
-			"name": "Pegar dados do usuário logado",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2FvMTExMUBlbWFpbC5jb20iLCJpYXQiOjE3NTU2NTE0OTcsImV4cCI6MTc1NTczNzg5N30.yWt5N4Ry_iLP57YCHFwWAZEJIlBbM4kIAFO2Tnvy080",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://{{base-url}}/api/usuario/me",
-					"protocol": "http",
-					"host": [
-						"{{base-url}}"
-					],
-					"path": [
-						"api",
-						"usuario",
-						"me"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Salvar usuário",
 			"request": {
 				"auth": {
@@ -46,7 +16,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"nome\": \"João Silva\",\n  \"senha\": \"senha123\",\n  \"email\": \"joao1111@email.com\",\n  \"cpf\": \"12345678900\",\n  \"data_nascimento\": \"1988-07-20\"\n}",
+					"raw": "{\n  \"nome\": \"João Silva\",\n  \"senha\": \"Fiap@2025\",\n  \"email\": \"joao1111@email.com\",\n  \"cpf\": \"12345678900\",\n  \"data_nascimento\": \"1988-07-20\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -62,6 +32,105 @@
 					"path": [
 						"api",
 						"usuario"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Apagar usuário",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6ekBlbWFpbC5jb20iLCJpYXQiOjE3NTU3OTY1MDcsImV4cCI6MTc1NTg4MjkwN30.ng_UEBtKMQP6gRS3x7gn65l6NEBhp_Qx98Gjxe6ccwM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{base-url}}/api/usuario/95220135-ed5e-49f5-aea3-668d25d68d42",
+					"protocol": "http",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"api",
+						"usuario",
+						"95220135-ed5e-49f5-aea3-668d25d68d42"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Editar usuário",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6ekBlbWFpbC5jb20iLCJpYXQiOjE3NTU3OTY1MDcsImV4cCI6MTc1NTg4MjkwN30.ng_UEBtKMQP6gRS3x7gn65l6NEBhp_Qx98Gjxe6ccwM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nome\": \"João Silva\",\n  \"senha\": \"Fiap@2025\",\n  \"email\": \"joao1111@email.com\",\n  \"cpf\": \"12345678900\",\n  \"data_nascimento\": \"1988-07-20\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{base-url}}/api/usuario/95220135-ed5e-49f5-aea3-668d25d68d42",
+					"protocol": "http",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"api",
+						"usuario",
+						"95220135-ed5e-49f5-aea3-668d25d68d42"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Buscar usuário pelo id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6ekBlbWFpbC5jb20iLCJpYXQiOjE3NTU3OTY1MDcsImV4cCI6MTc1NTg4MjkwN30.ng_UEBtKMQP6gRS3x7gn65l6NEBhp_Qx98Gjxe6ccwM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{base-url}}/api/usuario/95220135-ed5e-49f5-aea3-668d25d68d42",
+					"protocol": "http",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"api",
+						"usuario",
+						"95220135-ed5e-49f5-aea3-668d25d68d42"
 					]
 				}
 			},
@@ -97,14 +166,14 @@
 			"response": []
 		},
 		{
-			"name": "Buscar usuário pelo id",
+			"name": "Pegar dados do usuário logado",
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6ekBlbWFpbC5jb20iLCJpYXQiOjE3NTU3OTY1MDcsImV4cCI6MTc1NTg4MjkwN30.ng_UEBtKMQP6gRS3x7gn65l6NEBhp_Qx98Gjxe6ccwM",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2FvMTExMUBlbWFpbC5jb20iLCJpYXQiOjE3NTU2NTE0OTcsImV4cCI6MTc1NTczNzg5N30.yWt5N4Ry_iLP57YCHFwWAZEJIlBbM4kIAFO2Tnvy080",
 							"type": "string"
 						}
 					]
@@ -112,7 +181,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{base-url}}/api/usuario/95220135-ed5e-49f5-aea3-668d25d68d42",
+					"raw": "http://{{base-url}}/api/usuario/me",
 					"protocol": "http",
 					"host": [
 						"{{base-url}}"
@@ -120,7 +189,7 @@
 					"path": [
 						"api",
 						"usuario",
-						"95220135-ed5e-49f5-aea3-668d25d68d42"
+						"me"
 					]
 				}
 			},
