@@ -1,7 +1,7 @@
 # hackaton-fiap-autenticacao
 Descrição
 ---------
-Micro-Serviço de cadastro e autenticação de usuário do Hackaton da pós de Arquitetura de Software da FIAP.
+Microsserviço de cadastro e autenticação de usuário do Hackaton da pós de Arquitetura de Software da FIAP.
 
 Participantes
 -------------
