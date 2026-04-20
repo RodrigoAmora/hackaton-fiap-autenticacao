@@ -5,7 +5,7 @@ Microsserviço de cadastro e autenticação de usuário do Hackaton da pós de A
 
 Avaliação
 ---------
-![Avaliação do projeto pelos professores da pós.<br> Nota: 89,14 de 90](imagens/cobertura-de-testes.png)
+![Avaliação do projeto pelos professores da pós.<br> Nota: 89,14 de 90](imagens/avalicao-hackaton.png)
 
 Participantes
 -------------
