@@ -3,6 +3,10 @@ Descrição
 ---------
 Microsserviço de cadastro e autenticação de usuário do Hackaton da pós de Arquitetura de Software da FIAP.
 
+Avaliação
+---------
+![Avaliação do projeto pelos professores da pós.<br> Nota: 89,14 de 90](imagens/cobertura-de-testes.png)
+
 Participantes
 -------------
 * Bruno do Amor Divino da Paixão - RM360643
