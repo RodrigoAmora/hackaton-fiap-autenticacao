@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 10
 
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Habilita Node.js 24 agora
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true  # Habilita Node.js 24 agora
 
     steps:
       - uses: actions/checkout@v4
