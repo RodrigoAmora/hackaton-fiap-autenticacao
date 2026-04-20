@@ -13,6 +13,7 @@ jobs:
 
     env:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true  # Habilita Node.js 24 agora
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # Força Node.js 24
 
     steps:
       - uses: actions/checkout@v4
